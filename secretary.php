@@ -1,8 +1,15 @@
 <?php
 session_start();
+
+if(!isset($_SESSION['user']))
+{
+	//header('Location: access.php');
+}
+
 if(!isset($_SESSION['user']))
 {
 	$logged = 0;
+	$username = "Guest";
 }
 else
 {
@@ -52,11 +59,11 @@ else
 <?php
 if($logged ==0)
 {
-	echo '<a href = access.php><button class="button place-right warning">LOGIN</button></a>';
+	echo '<a href = forum/login.php><button class="button place-right warning">LOGIN</button></a>';
 }
 else
 {
-	echo '<a href = leave.php><button class="button place-right warning">LOGOUT</button></a>';
+	echo '<a href = forum/logout.php><button class="button place-right warning">LOGOUT</button></a>';
 	echo '<button class="button place-right">'.$username.'</button>';
 }
 ?>
@@ -87,7 +94,7 @@ else
 	<?php
 		define('INCLUDE_CHECK', true);
 		require 'connect.php';
-		$data = mysql_fetch_array(mysql_query("SELECT sRoom, sEmail, sMobile, sCode, sName, sPost, sInfo, sBudgetDate FROM secretaryDetails WHERE sCode='{$_GET['sec']}'"));
+		$data = mysql_fetch_array(mysql_query("SELECT sRoom, sEmail, sRoll, sMobile, sCode, sName, sPost, sInfo, sBudgetDate FROM secretaryDetails WHERE sCode='{$_GET['sec']}'"));
 		$title = $data['sPost'];
 		$name = $data['sName'];
 		$code = $data['sCode'];
@@ -95,6 +102,7 @@ else
 		$secroom1 = $data['sRoom'];
 		$secmail1 = $data['sEmail'];
 		$secmob1 = $data['sMobile'];
+		$secroll = $data['sRoll'];
 
 		$lastUpdate = $data['sBudgetDate'];
 
@@ -107,7 +115,7 @@ echo'
 
                     <table class="table">
                         <tbody>
-                        <tr class="transparent"><td style="width: 180px;"><img src="images/council/'.$code.'.jpg" class="place-left margin10 size2 nlm ntm"></td><td>"'.$brief.'"</td></tr>
+                        <tr class="transparent"><td style="width: 180px;"><img src="images/council/'.$code.'.jpg" class="place-left margin10 size15 nlm ntm"></td><td>"'.$brief.'"</td></tr>
                         </tbody>
                     </table>
 
@@ -173,59 +181,18 @@ echo'
                         </div>
                     </div>
                     </a>
-
+		<br>
 ';
-		$row = mysql_fetch_array(mysql_query("SELECT mCode FROM gbmMinutes WHERE mCode='{$_GET['sec']}'"));
-		$count = 0;
-
-echo '	
-		<center><h1 style="color: #ffffff; font-size: 30px; padding-top:370px"><br>GBM Minutes</h1></center>  
-';
-		if($row["mCode"])
-		{
-			$query = mysql_query("SELECT mDetails, mExpense FROM gbmMinutes WHERE mCode='{$_GET['sec']}'");
-echo '
-            <div class="example">
-                    <table class="table hovered">
-                        <thead>
-                        <tr>
-                            <th class="text-left">Sl No</th>
-                            <th class="text-left">Details</th>
-                            <th class="text-left">Expense</th>
-                            <th class="text-left">Deadline</th>
-                            <th class="text-left">Status</th>
-                        </tr>
-                        </thead>
-
-                        <tbody>
-';
-			while($entry = mysql_fetch_assoc($query))
-			{
-				$count = $count + 1;
-				$details = $entry['mDetails'];
-				$expense = $entry['mExpense'];		
+if($logged == 0)
+{
 echo'
-                        <tr><td>'.$count.'</td><td class="right">'.$details.'</td><td class="right">'.$expense.'</td><td class="right">April 2</td><td class="right">Done</td></tr>
+<center><p style="font-size: 15px; color: #FFF410; padding-top: 390px">Please <a href = forum/login.php style="color:#ffffff"><strong>Login as Resident</strong></a> to see more details.</p></center>
 ';
-			}
+}
+else
+{
 echo'
-			</tbody>
-
-                        <tfoot></tfoot>
-                    </table>
-	     </div>
-';
-		}
-		else
-		{
-echo'
-		<center><p style="font-size: 15px; color: #FFF410">GBM Minutes are not updated by the '.$title.'.</p></center>
-';
-		}
-
-echo'
-<br>
-		<center><h1 style="color: #ffffff;  font-size: 30px">Budget Details</h1></center>
+		<center><h1 style="color: #ffffff;  font-size: 30px; padding-top: 390px">Budget Details</h1></center>
 ';
 		$row2 = mysql_fetch_array(mysql_query("SELECT bCode FROM budget WHERE bCode='{$_GET['sec']}'"));
 		$count2 = 0;
@@ -272,9 +239,10 @@ Last updated on <strong>'.$lastUpdate.'</strong>.
 		else
 		{
 echo'
-		<center><p style="font-size: 15px; color: #FFF410">Budget Details are not updated by the '.$title.'.</p></center>
+		<center><p style="font-size: 15px; color: #FFF410";>Budget Details are not updated by the '.$title.'.</p></center>
 ';
 		}
+}
 
 ?>		
 	<br><br>

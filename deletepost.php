@@ -11,8 +11,6 @@ define('INCLUDE_CHECK', true);
 require 'connect.php';
 $forumID = $_GET['ref'];
 
-mysql_query("DELETE FROM forumInfo WHERE fId='{$forumID}'");
+mysql_query("DELETE FROM alak_forumInfo WHERE fId='{$forumID}'");
 header('Location: inmatesforum.php');
 ?>
-
-

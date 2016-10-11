@@ -12,7 +12,6 @@ else
 }
 define('INCLUDE_CHECK', true);
 require 'connect.php';
-require 'age.php';
 require 'mail.php';
 ?>
 
@@ -23,6 +22,9 @@ require 'mail.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="product" content="Alakananda Hostel, IIT Madras">
     <meta name="description" content="Official website of Alakananda Hostel, IIT Madras, Chennai.">
+    <meta property="og:title" content="Alakananda Hostel, IIT Madras">
+    <meta property="og:description" content="The new official website of Alakananda Hostel! Alakananda, built in the 1970s has been home away from home to some of the finest students of IIT Madras.">
+    <meta property="og:image" content="http://alakananda.in/images/fb_img.jpg">
     <link rel="shortcut icon" href="favicon.png" type="image/x-icon">
     <link href="css/metro-bootstrap.css" rel="stylesheet">
     <script src="js/jquery/jquery.min.js"></script>
@@ -39,6 +41,14 @@ require 'mail.php';
     </style>
 </head>
 <body class="metro">
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -53,66 +63,29 @@ require 'mail.php';
 <?php
 if($logged ==0)
 {
-	echo '<a href = access.php><button class="button place-right warning">LOGIN</button></a>';
+	echo '<a href = forum/login.php><button class="button place-right warning">LOGIN</button></a>';
 }
 else
 {
-	echo '<a href = leave.php><button class="button place-right warning">LOGOUT</button></a>';
+	echo '<a href = forum/logout.php><button class="button place-right warning">LOGOUT</button></a>';
 	echo '<button class="button place-right">'.$username.'</button>';
 }
 $searchedRoll = 0;
 $searchedRoom = 0;
-				$postError = 0;
-
-		    		if($_GET['action']=='postIP') 
-				{
-				       	$ipUser = $_POST['userName'];
-				       	$userRoll = $_POST['rollAuth'];
-					$userRoom      = $_POST['roomAuth'];
-					$userWing 	= $_POST['passCode'];
-					$ipSub 	= $_POST['ipSub'];
-					$ipCon 	= $_POST['ipCon'];
-					$ipdate 	= $_POST['ipDate'];
-
-					$credentials = mysql_query("SELECT rRoll, rName FROM residentsList WHERE rRoll='{$userRoll}' AND rRoom='{$userRoom}' AND rWing='{$userWing}'");
-
-
-					if(mysql_num_rows($credentials) == 0)
-					{
-						$postError = 1;
-					}
-					else
-					{		
-						mysql_query("INSERT INTO ipData (iUser, iSubject, iContent, iHighlight) VALUES ('{$ipUser}','{$ipSub}', '{$ipCon}', '0')");
-
-							$mailSub = "New IP: ".$ipSub;
-							$mailCon = $ipCon."\n\n- ".$ipUser;
-
-							mailer('Resident','alakjunta@googlegroups.com', $mailSub , $mailCon);
-							header('Location: index.php');
-					}
-
-				}
-				
+			
 				$searchRoll = 0;
-
 		    		if($_GET['action']=='searchRoll') 
 				{
 					$searchedRoll = 1;
 
-					$residentQuery_Roll = mysql_query("SELECT rRoom, rName, rRoll, rWing, rYear, rBranch, rMobile, rEmail FROM residentsList WHERE rRoll='{$_POST['residentRoll']}'");
+					$residentQuery_Roll = mysql_query("SELECT mRoom, mName, mRoll FROM alak_people WHERE mRoll='{$_POST['residentRoll']}'");
 					while($residentInfo = mysql_fetch_assoc($residentQuery_Roll))
 					{
 						$searchRoll = 1;
 					
-						$residentName = $residentInfo['rName'];
-						$residentRoom = $residentInfo['rRoom'];
-						$residentRoll = $residentInfo['rRoll'];	
-						$residentWing = $residentInfo['rWing'];
-						$residentYear = $residentInfo['rYear'];
-						$residentDept = $residentInfo['rBranch'];
-						$residentMobile = $residentInfo['rMobile'];	
-						$residentEmail = $residentInfo['rEmail'];		
+						$residentName = $residentInfo['mName'];
+						$residentRoom = $residentInfo['mRoom'];
+						$residentRoll = $residentInfo['mRoll'];	
 						break;	
 					}
 		    		}
@@ -123,20 +96,14 @@ $searchedRoom = 0;
 				{
 					$searchedRoom = 1;
 
-					$residentQuery_Room = mysql_query("SELECT rRoom, rName, rRoll, rWing, rYear, rBranch, rMobile, rEmail FROM residentsList WHERE rRoom='{$_POST['residentRoom']}'");
+					$residentQuery_Room = mysql_query("SELECT mRoom, mName, mRoll FROM alak_people WHERE mRoom='{$_POST['residentRoom']}'");
 					while($residentInfo1 = mysql_fetch_assoc($residentQuery_Room))
 					{
 						$searchRoom = 1;
 					
-						$residentName = $residentInfo1['rName'];
-						$residentRoom = $residentInfo1['rRoom'];
-						$residentRoll = $residentInfo1['rRoll'];	
-						$residentWing = $residentInfo1['rWing'];
-						$residentYear = $residentInfo1['rYear'];
-						$residentDept = $residentInfo1['rBranch'];
-						$residentMobile = $residentInfo1['rMobile'];	
-						$residentEmail = $residentInfo1['rEmail'];		
-
+						$residentName = $residentInfo1['mName'];
+						$residentRoom = $residentInfo1['mRoom'];
+						$residentRoll = $residentInfo1['mRoll'];	
 						break;	
 					}
 		    		}
@@ -171,55 +138,57 @@ $searchedRoom = 0;
         <div class="main-content clearfix">
             <div class="tile-area no-padding clearfix">
                 <div class="tile-group no-margin no-padding clearfix" style="width: 100%">
-                    <div class="tile double quadro-vertical transparent" style="float: right; ">
 
+                    <div class="tile double quadro-vertical transparent" style="float: right; ">
                         <div class="tile-content">
 
+                            <div class="panel no-border">
+                                <center><div class="panel-header bg-gray fg-white">News & Events</div></center>
+                                <div class="panel-content transparent fg-white"><br>
 
-
-
-				<center><h1 style="color: #ffffff">News & Events</h1></center>
 
 			<?php
 $eventsFound = 0;
-				//For IP Flushing
-				date_default_timezone_set('Asia/Calcutta');
-				$startDate = date('d M Y');
-
-				$query = mysql_query("SELECT iSubject, iContent, iUser, iHighlight, iDeadline FROM ipData WHERE 1");
+				$query1 = mysql_query("SELECT pSubject, pContent, pName FROM alak_posts WHERE pDisplay = '1' AND pArchive = '0'");
+				$query2 = mysql_query("SELECT tDate, tTime, tVenue, tContent, tPost FROM alak_tasks WHERE tAcknowledge = '1' AND tArchive = '0'");
 
 echo '
 		                        <div class="accordion span3E place-left" data-role="accordion" data-closeany="false">
 ';
 
-					while($data = mysql_fetch_assoc($query))
-					{
+					while($data = mysql_fetch_assoc($query1))
+					{ $eventsFound = 1;
 
-						$eventsFound = 1;
-
-						$dateLast = $data['iDeadline'];
-						$endDate = date("d M Y", strtotime($dateLast));
-
-						if($startDate <= $endDate)
+						if(1)
 						{ 
 echo'
 		                            		<div class="accordion-frame">
 ';
-							if($data['iHighlight'] == 1)
+							if(1) // Secretary Post
 							{
-				                                echo' <div class="heading bg-darkRed fg-yellow"><marquee>'.$data['iSubject'].'</marquee></div> ';
+				                                echo' <div class="heading bg-darkRed fg-yellow">'.$data['pSubject'].'</div> ';
 							}
 							else
 							{
-						                echo' <div class="heading bg-gray fg-white">'.$data['iSubject'].'</div> ';
+						                echo' <div class="heading bg-amber fg-darkRed">'.$data['pSubject'].'</div> ';
 							}
 echo'
 					                                <div class="content">
-				                                    '.$data['iContent'].'<br> - '.$data['iUser'].'
+				                                    '.$data['pContent'].'<br> - '.$data['pName'].'
 				                                </div>
 	    		                                </div>
 '; 
 						}
+					}
+					while($data2 = mysql_fetch_assoc($query2))
+					{ $eventsFound = 1;
+echo'		                            		<div class="accordion-frame">
+				                        <div class="heading bg-darkBlue fg-yellow">Upcoming Event on<br>'.$data2['tDate'].'</div>
+			                                <div class="content">
+			                                    '.$data2['tContent'].'<br>Venue : '.$data2['tVenue'].'<br>Time: '.$data2['tTime'].'<br> - '.$data2['tPost'].'
+			                                </div>
+	    		                                </div>
+'; 
 					}
 
 echo'		                        </div>
@@ -230,32 +199,25 @@ if($eventsFound == 0)
 {
 echo '<center><br><p style="color: #F3EB0A">There are no upcoming events.<br></p></center>';
 }
+	echo' <center><a href="access.php">Login to Inmates Forum</a></center>';
 
+echo '				
+				</div>
+			     </div>
 
+                            <div class="panel no-border">
+                                <center><div class="panel-header bg-gray fg-white">Search Residents</div></center>
+                                <div class="panel-content transparent fg-white"><br>
 
-if($logged ==1)
-{
-	echo' <center><button class="button warning" id="createFlatWindow">Post an IP</button></center>';
-	if($postError ==1)
-	{
-		echo'<center><p style="color: #ffffff">Incorrect Username/Passcode combination.</p></center>';
-	}
-}
-
-echo '
-
-				<center><h1 style="color: #ffffff; font-size: 24px; padding-top: 15px">Resident Search</h1></center>
 					<div class="place-middle">
 					    <form method="post" action="?action=searchRoll">
-						<div class="input-control text size3 margin10 nrm">
+						<div class="input-control text size3 nrm">
 						    <input type="text" name="residentRoll" placeholder="Enter Roll Number">
 						    <button type="submit" class="btn-search"></button>
 						</div>
 					    </form>
-					</div>
-					<div class="place-middle">
 					    <form method="post" action="?action=searchRoom">
-						<div class="input-control text size3 margin10 nrm">
+						<div class="input-control text size3 nrm">
 						    <input type="text" name="residentRoom" placeholder="Enter Room Number">
 						    <button type="submit" class="btn-search"></button>
 						</div>
@@ -278,7 +240,12 @@ echo'
 						    </div>
 						    <div class="panel-content">
 							<center><img src="http://photos.iitm.ac.in/byroll.php?roll='.$residentRoll.'" class="margin10 size2 nlm ntm"><br>
-						        <strong>'.$residentName.'</strong><br>Room #'.$residentRoom.', '.$residentWing.' Wing<br>'.$residentYear.' Year Student<br>'.$residentDept.' </center><br><br><strong>Mobile</strong> : <br>'.$residentMobile.'<br><strong>EMail</strong> : <br>'.$residentEmail.'
+						    <table class="table">
+							<tbody>        
+							<tr class="transparent"><td class="fg-yellow">Name</td><td>'.$residentName.'</td></tr>
+							<tr class="transparent"><td class="fg-yellow">Room</td><td>'.$residentRoom.'</td></tr>      
+							</tbody>
+						    </table>
 						    </div>
 						</div>
 ';
@@ -300,7 +267,12 @@ echo'
 						    </div>
 						    <div class="panel-content">
 							<center><img src="http://photos.iitm.ac.in/byroll.php?roll='.$residentRoll.'" class="margin10 size2 nlm ntm"><br>
-						        <strong>'.$residentName.'</strong><br>Roll No. '.$residentRoll.'<br>'.$residentYear.' Year Student<br>'.$residentDept.'<br><br></center><strong>Mobile</strong> : <br>'.$residentMobile.'<br><strong>EMail</strong> : <br>'.$residentEmail.'
+
+						    <table class="table">
+							<tbody>        
+							<tr class="transparent"><td class="fg-yellow">Name</td><td>'.$residentName.'</td></tr>
+							<tr class="transparent"><td class="fg-yellow">Roll</td><td>'.$residentRoll.'</td></tr>							</tbody>
+						    </table>
 						    </div>
 						</div>
 ';
@@ -312,13 +284,16 @@ echo'
 echo '
                         </div>
                     </div>
+
+               	  </div>
+               </div>
 ';
 echo "
 
 
 
 	<script>
-                        $(\"#createFlatWindow\").on('click', function(){
+                        $(\"#postIP\").on('click', function(){
                             $.Dialog({
                                 overlay: true,
                                 shadow: true,
@@ -330,7 +305,6 @@ echo "
                                 padding: 15,
                                 onShow: function(_dialog){
                                     var content = '<form class=\"user-input\" method=\"post\" action=\"?action=postIP\">' +
-                                            '<div class=\"input-control text\"><input placeholder=\"Name to be Displayed\" type=\"text\" name=\"userName\" required></div>' +
                                             '<div class=\"input-control text\"><input placeholder=\"Room Number\" type=\"text\" name=\"roomAuth\" required></div>' +
                                             '<div class=\"input-control text\"><input placeholder=\"Roll Number\" type=\"text\" name=\"rollAuth\" required></div>' +
                                             '<div class=\"input-control password\"><input placeholder=\"Pass-Code\" type=\"password\" name=\"passCode\" required></div>' +
@@ -357,21 +331,38 @@ echo "
 ";
 ?>
 
-
                     <div class="tile quadro double-vertical ol-transparent" style="height: 250px;">
                         <div class="tile-content">
 
                                 <div class="carousel" id="carousel2">
                                     <div class="slide">
-                                        <img src="images/alak1.jpg" class="cover1" />
+                                        <img src="images/slideshow/1.jpg" class="cover1" />
                                     </div>
 
                                     <div class="slide">
-                                        <img src="images/alak2.jpg" class="cover1" />
+                                        <img src="images/slideshow/2.jpg" class="cover1" />
                                     </div>
 
                                     <div class="slide">
-                                        <img src="images/alak3.jpg" class="cover1"/>
+                                        <img src="images/slideshow/3.jpg" class="cover1"/>
+                                    </div>
+
+                                    <div class="slide">
+                                        <img src="images/slideshow/4.jpg" class="cover1"/>
+                                    </div>
+
+                                    <div class="slide">
+                                        <img src="images/slideshow/5.jpg" class="cover1"/>
+                                    </div>
+
+                                    <div class="slide">
+                                        <img src="images/slideshow/6.jpg" class="cover1"/>
+                                    </div>
+                                    <div class="slide">
+                                        <img src="images/slideshow/7.jpg" class="cover1"/>
+                                    </div>
+                                    <div class="slide">
+                                        <img src="images/slideshow/8.jpg" class="cover1"/>
                                     </div>
                                 </div>
                                 <script>
@@ -380,7 +371,7 @@ echo "
                                             height: 250,
                                             effect: 'fade',
                                             markers: {
-                                                show: true,
+                                                show: false,
                                                 type: 'square',
                                                 position: 'bottom-right'
                                             }
@@ -401,7 +392,7 @@ echo "
                     <a href="gallery.php">
 		    <div class="tile bg-lightBlue transparent">
                         <div class="tile-content">
-                                    <img src="images/side_hall of fame.png" />
+                                    <img src="images/side_gallery.png" />
 				    <center><p style="color: #ffffff">Gallery</p></center>
                         </div>
                     </div>
@@ -422,9 +413,13 @@ echo "
                         </div>
                     </div>
                     </a>
+                    
+
                     <div class="tile triple double-vertical transparent" height=100px style="height: auto;">
                         <div class="tile-content">
+                 
                             <div class="panel no-border">
+                            
                                 <div class="panel-header bg-gray fg-white">About</div>
                                 <div class="panel-content transparent fg-white"><br>
                                     <img src="images/alak_logo.png" class="place-left margin10 nlm ntm size2">
@@ -451,10 +446,79 @@ echo "
 
                                </div>
                             </div>
-                  
                 </div>
             </div>
-	 <center><p style="color: #aaaaaa">Alakananda Hostel, IIT Madras, Chennai - 36</center>
+
+                    <div class="tile double quadro-vertical transparent" style="float: right; ">
+                        <div class="tile-content">
+                            <div class="panel no-border">
+                                <div class="panel-header bg-gray fg-yellow border" style="margin-bottom: 5px">Standings</div>
+
+
+			<div class="accordion span3E2 place-left" data-role="accordion" data-closeany="false">
+<?php
+		$point_query = mysql_query("SELECT h1, h2, h3, p1, p2, p3, pA, posA, title, date FROM alak_pointsTable WHERE 1 ORDER BY title");
+		while($stand = mysql_fetch_assoc($point_query))
+		{	
+			$hostel1 = $stand['h1'];
+			$point1	= $stand['p1'];
+			$hostel2 = $stand['h2'];
+			$point2	= $stand['p2'];
+			$hostel3 = $stand['h3'];
+			$point3	= $stand['p3'];
+			$alakpoint = $stand['posA'];
+			$alakpos = $stand['pA'];
+			$lastTime = $stand['date'];
+			$title = $stand['title'];
+
+echo'		
+			<div class="accordion-frame">
+			<div class="heading bg-darkBlue fg-white">
+			'.$title.'
+			</div>
+			<div class="content">
+				    <table class="table">
+				        <tbody>
+					<tr class="transparent fg-yellow"><td class="right">Pos.</td><td>Hostel</td><td class="right">Points</td></tr>				        
+					<tr class="transparent"><td class="right">1</td><td>'.$hostel1.'</td><td class="right">'.$point1.'</td></tr>
+				        <tr class="transparent"><td class="right">2</td><td>'.$hostel2.'</td><td class="right">'.$point2.'</td></tr>
+				        <tr class="transparent"><td class="right">3</td><td>'.$hostel3.'</td><td class="right">'.$point3.'</td></tr>
+				        <tr class="bg-white fg-red"><td class="right">'.$alakpos.'</td><td>Alakananda</td><td class="right">'.$alakpoint.'</td></tr>
+				        </tbody>
+				    </table>
+				<p style="color:#A4A4A4; font-size: 10px">Updated on '.$lastTime.'</p>
+			</div>
+			</div>
+';
+		}
+?>
+		</div>
+                                </div>
+                            </div>
+			</div>
+
+                    <div class="tile double quadro-vertical transparent" style="float: right; ">
+                        <div class="tile-content">
+                            <div class="panel no-border bg-darkBlue">
+<div class="fb-like-box" data-href="https://www.facebook.com/alakanandahostel" data-width="250" data-height="200" data-colorscheme="dark" data-show-faces="true" data-header="false" data-stream="false" data-show-border="false"></div>
+		            </div>
+			</div>
+		    </div>
+		    
+		    <div class="tile double quadro-vertical" style="float: right; ">
+                        <div class="tile-content">
+                            <a href= "http://www.abhijithcs.me"><div class="panel no-border bg-darkBlue" style="padding: 10px;">
+	 				<center><p style="color: #ffffff;">Alakananda Hostel, IIT Madras, Chennai - 36</p></center>
+	 	 			<center><p style="color: #aaaaaa; font-size: 10px">Site developed and maintained by Abhijith C S</p></center>
+		            </div></a>
+			</div>
+		    </div>
+
+
+
+		   </div>
+
+
         </div>
     </div>
     <script src="js/hitua.js"></script>

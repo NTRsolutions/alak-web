@@ -1,0 +1,2 @@
+
+[28-Jan-2016 10:55:14 Asia/Calcutta] PHP Warning:  mysql_connect(): Can't connect to local MySQL server through socket '/var/lib/mysql/mysql.sock' (111) in /home/a22ff553/public_html/rg/connect.php on line 9

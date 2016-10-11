@@ -1,5 +1,6 @@
 <?php
 session_start();
+
 if(!isset($_SESSION['user']))
 {
 	$logged = 0;
@@ -9,6 +10,9 @@ else
 	$logged = 1;
 	$username = $_SESSION['user'];
 }
+
+define('INCLUDE_CHECK', true);
+require 'connect.php';
 ?>
 
 <!DOCTYPE html>
@@ -44,14 +48,15 @@ else
   ga('send', 'pageview');
 
 </script>
+
 <?php
 if($logged ==0)
 {
-	echo '<a href = access.php><button class="button place-right warning">LOGIN</button></a>';
+	echo '<a href = forum/login.php><button class="button place-right warning">LOGIN</button></a>';
 }
 else
 {
-	echo '<a href = leave.php><button class="button place-right warning">LOGOUT</button></a>';
+	echo '<a href = forum/logout.php><button class="button place-right warning">LOGOUT</button></a>';
 	echo '<button class="button place-right">'.$username.'</button>';
 }
 ?>
@@ -81,21 +86,31 @@ else
         <div class="main-content clearfix">
             <div class="tile-area no-padding clearfix">
                 <div class="tile-group no-margin no-padding clearfix" style="width: 100%">
-                 
-                    <div class="tile triple double-vertical transparent" style="height: auto" >
+
+<?php
+$query = mysql_query("SELECT pgTitle, pgContent, pgDate, pgFlag FROM pageGallery WHERE 1");
+$data = mysql_fetch_array($query);
+	$title = $data['pgTitle'];
+	$date = $data['pgDate'];
+	$content = $data['pgContent'];
+	$flag = $data['pgFlag'];
+echo'                 
+                    <div class="tile triple double-vertical transparent" height=100px  style="height: auto;">
                         <div class="tile-content">
                             <div class="panel no-border">
-                                <div class="panel-header bg-gray fg-white">Tech Soc Champions 2013</div>
-                                <div class="panel-content transparent fg-white"><br>
-                                    <img src="images/fame1.jpg" class="place-left margin10 nlm ntm">
-				Alakananda won the 'tech soc' title for 2012-2013!
+                                <div class="panel-header bg-amber fg-white"><strong>'.$title.'</strong></div>
+                                <div class="panel-content fg-yellow"><br>
+';
+				if($flag == 1)
+                                { echo' <img src="images/gallery/'.$title.'.jpg" width="66%" class="place-left margin10 nlm ntm"> ';}
+
+echo ' '.$content.' 
                                 </div>
                             </div>
                         </div>
-
-			<!-- TRY ADDING A SLIDESHOW HERE-->
-
                     </div>
+';
+?>
 
                     <a href="index.php">
                     <div class="tile bg-lightBlue transparent">
@@ -140,18 +155,57 @@ else
                     <a href="https://www.facebook.com/alakanandahostel" target="new">
                     <div class="tile bg-lightBlue transparent">
                         <div class="tile-content">
-                                    <img src="images/side_library.png" />
+                                    <img src="images/side_facebook.png" />
 				    <center><p style="color: #ffffff">Facebook</p></center>
                         </div>
                     </div>
                     </a>
-	
-	         </div>
+
+<?php
+$query = mysql_query("SELECT pgTitle, pgContent, pgDate, pgFlag FROM alak_pageGallery WHERE 1");
+$count = 0;
+while ($data = mysql_fetch_array($query))
+{
+	$title = $data['pgTitle'];
+	$date = $data['pgDate'];
+	$content = $data['pgContent'];
+	$flag = $data['pgFlag'];
+
+	if($count != 0)
+	{
+echo'
+
+                    <div class="tile triple double-vertical transparent" height=100px style="height: auto;">
+                        <div class="tile-content">
+                            <div class="panel no-border">
+                                <div class="panel-header bg-amber fg-white"><strong>'.$title.'</strong></div>
+                                <div class="panel-content  fg-yellow"><br>
+';
+				if($flag == 1)
+				{					
+                                    echo' <img src="images/gallery/'.$title.'.jpg" width = "50%" class="place-left margin10 nlm ntm"> ';
+				}
+echo ' '.$content.'			
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+';
+	}
+	$count++;
+}
+?>
+
+                </div>
             </div>
-        </div>
+         </div>
+
     </div>
 
     <script src="js/hitua.js"></script>
 
 </body>
 </html>
+
+
+
